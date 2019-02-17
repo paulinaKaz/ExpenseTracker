@@ -34,7 +34,7 @@ import static paulinaKaz.expensesTrackerApp.util.ViewsAndRedirections.EXPENSE_FO
         mockMvc.perform(get("/expense/add"))
                 .andExpect(status().isOk())
                 .andExpect(view().name(EXPENSE_FORM))
-                .andExpect(model().attribute())
+                .andExpect(model().attribute()
 
     }
 }
