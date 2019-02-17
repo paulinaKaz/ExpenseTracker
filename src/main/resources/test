@@ -1,0 +1,30 @@
+public static <T extends Comparable<? super T>> void sort (List<T> list){}
+
+
+
+
+jakasMetoda (listaKrolikow);
+
+
+public <T extends zwierzeDomowe> void  jakasMetoda (List<T> listaZwierzaczkow){
+
+Chomik zwierzaczek2 = listaZwierzaczkow.get(0); /// nie mozna
+
+listaZwierzakow.add(new Chomik() );  /// nie mozna
+
+Zwierze z1 = listaZ.get(0); /// mozna
+
+ListaZ.add ( new Zwierze() ); /// nie mozna
+
+}
+
+
+public  void jakasMetoda2 (List<? super ZwierzeDomowe> listazwierzaczkow){
+Chomik zwierzaczek2 = listaZwierzaczkow.get(0); / nie mozna
+Zwierze z1 = listaZ.get(0); /// nie mozna
+ListaZ.add(new Zwierze() ); //  nie mozna
+listaZ.add (new ZwierzeDomowe() ); /// mozna
+lista.add ( new Chomik() ); // mozna
+
+}
+
