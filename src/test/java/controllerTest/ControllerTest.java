@@ -34,7 +34,11 @@ import static paulinaKaz.expensesTrackerApp.util.ViewsAndRedirections.EXPENSE_FO
         mockMvc.perform(get("/expense/add"))
                 .andExpect(status().isOk())
                 .andExpect(view().name(EXPENSE_FORM))
+<<<<<<< HEAD
                 .andExpect(model().a)
+=======
+                .andExpect(model().attribute()sakrak
+>>>>>>> c1b850978cada611584f54cdc08e7e6a4863658b
 
     }
 }
