@@ -9,11 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.test.web.servlet.MockMvc;
 import paulinaKaz.expensesTrackerApp.service.ExpenseService;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-import static paulinaKaz.expensesTrackerApp.util.ViewsAndRedirections.EXPENSE_FORM;
 
  class ControllerTest {
 
@@ -31,14 +26,7 @@ import static paulinaKaz.expensesTrackerApp.util.ViewsAndRedirections.EXPENSE_FO
 
     @Test
     void testShowExpenseForm() throws Exception {
-        mockMvc.perform(get("/expense/add"))
-                .andExpect(status().isOk())
-                .andExpect(view().name(EXPENSE_FORM))
-<<<<<<< HEAD
-                .andExpect(model().a)
-=======
-                .andExpect(model().attribute()sakrak
->>>>>>> c1b850978cada611584f54cdc08e7e6a4863658b
+
 
     }
 }
