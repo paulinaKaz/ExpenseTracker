@@ -3,7 +3,6 @@ package controllerTest;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -18,10 +17,11 @@ import paulinaKaz.expensesTrackerApp.util.DateConverter;
 import paulinaKaz.expensesTrackerApp.util.Month;
 
 import java.util.Date;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.matches;
+import static org.hamcrest.text.MatchesPattern.matchesPattern;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static paulinaKaz.expensesTrackerApp.util.ViewsAndRedirections.EXPENSE_FORM;
@@ -31,13 +31,13 @@ class ControllerTest {
 
     @InjectMocks
     private ExpenseController controller;
-   @Mock
+    @Mock
     private ExpenseService expenseService;
 
     private MockMvc mockMvc;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         MockitoAnnotations.initMocks(this);
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver("/WEB-INF/views", ".jsp");
         mockMvc = MockMvcBuilders.standaloneSetup(controller).setViewResolvers(viewResolver).build();
@@ -45,17 +45,16 @@ class ControllerTest {
     }
 
     @Test
-     void testShowExpenseForm() throws Exception{
-        Pattern datePattern = Pattern.compile("^(3[01]|[12][0-9]|0[1-9])/(1[0-2]|0[1-9])/[0-9]{4}$");
+    void testShowExpenseForm() throws Exception {
+        Pattern datePattern = Pattern.compile("^(1[0-2]|0[1-9])/(3[01]|[12][0-9]|0[1-9])/[0-9]{4}$");
         mockMvc.perform(get("/add"))
                 .andExpect(status().isOk())
                 .andExpect(view().name(EXPENSE_FORM))
-                .andExpect(model().attribute("defaultDate",matches(datePattern)))
+                .andExpect(model().attribute("defaultDate", matchesPattern(datePattern)))
                 .andExpect(model().attribute("expense", Matchers.any(Expense.class)))
                 .andExpect(model().attribute("categories", Category.values()))
                 .andExpect(model().attribute("month", Month.values()));
 
     }
-
 
 }
