@@ -1,6 +1,7 @@
 package paulinaKaz.expensesTrackerApp.service;
 
 import org.apache.commons.lang3.EnumUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import paulinaKaz.expensesTrackerApp.dao.ExpenseDao;
 import paulinaKaz.expensesTrackerApp.model.Expense;
@@ -20,11 +21,9 @@ import static paulinaKaz.expensesTrackerApp.util.Messages.LIST_MONTH;
 @Service
 public class ExpenseService {
 
-    private final ExpenseDao expenseDao;
+    @Autowired
+    private ExpenseDao expenseDao;
 
-    public ExpenseService(ExpenseDao expenseDao) {
-        this.expenseDao = expenseDao;
-    }
 
     public void saveOrUpdateExpense(Expense expense) {
         expenseDao.saveOrUpdateExpense(expense);

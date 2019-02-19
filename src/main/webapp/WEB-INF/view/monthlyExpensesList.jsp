@@ -19,10 +19,9 @@
             <h2>${message}</h2>
         </div>
         <div class="col-sm-6 col-md-4 col-lg-3">
-            <form action="<c:url value="/expense/expensesList" />" class="ml-auto">
+            <form action="<c:url value="/expensesList" />" class="ml-auto">
                 <input type="hidden" name="message" value="${message}">
                 <select onchange="this.form.submit()" name="selectedCategory" class="custom-select mb-3">
-                    <option hidden>Select category</option>
                     <option value="All"
                             <c:if test="${selectedCategory == 'All'}">selected</c:if>
                     >all
@@ -57,7 +56,7 @@
                                                                      pattern="MM/dd/yyyy"/></td>
                             <td class="align-middle">${expense.category.categoryName}</td>
                             <td>
-                                <form action="<c:url value="/expense/showExpense"/>">
+                                <form action="<c:url value="/showExpense"/>">
                                     <input type="hidden" name="id" value="${expense.id}">
                                     <button type="submit" class="btn btn-success">Show expense</button>
                                 </form>
@@ -75,7 +74,7 @@
                                                                      pattern="MM/dd/yyyy"/></td>
                             <td class="align-middle">${expense.category.categoryName}</td>
                             <td>
-                                <form action="<c:url value="/expense/showExpense"/>">
+                                <form action="<c:url value="/showExpense"/>">
                                     <input type="hidden" name="id" value="${expense.id}">
                                     <button type="submit" class="btn btn-success">Show expense</button>
                                 </form>

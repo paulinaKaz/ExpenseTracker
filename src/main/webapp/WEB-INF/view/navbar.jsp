@@ -12,20 +12,20 @@
 </head>
 <body>
 <nav class="navbar navbar-dark bg-dark navbar-expand-lg sticky-top">
-    <a class="navbar-brand" href="<c:url value="/expense/"/>">ExpensesTracker</a>
+    <a class="navbar-brand" href="<c:url value="/home"/>">ExpensesTracker</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="<c:url value="/expense/add"/>">Add new</a>
+                <a class="nav-link" href="<c:url value="/add"/>">Add new</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<c:url value="/expense/showLast30Days"/>">Last 30 days</a>
+                <a class="nav-link" href="<c:url value="/showLast30Days"/>">Last 30 days</a>
             </li>
         </ul>
-        <form class="form-inline ml-auto" action="<c:url value="/expense/showSpecificMoth"/>">
+        <form class="form-inline ml-auto" action="<c:url value="/showSpecificMoth"/>">
             <input type="hidden" value="all" name="selectedCategory">
             <select class="form-control mr-sm-2" name="month">
                 <option value="0">Whole year</option>

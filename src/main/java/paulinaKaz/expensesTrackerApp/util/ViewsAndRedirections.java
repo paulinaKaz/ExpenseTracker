@@ -8,6 +8,5 @@ public class ViewsAndRedirections {
     public static final String MESSAGE = "message";
     public static final String LIST_VIEW = "monthlyExpensesList";
 
-    public static final String REDIRECT_TO_LIST_VIEW = "redirect:showLast30Days";
 
 }

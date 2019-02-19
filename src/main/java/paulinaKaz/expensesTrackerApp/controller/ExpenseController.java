@@ -22,18 +22,12 @@ import static paulinaKaz.expensesTrackerApp.util.Messages.SESSION;
 import static paulinaKaz.expensesTrackerApp.util.ViewsAndRedirections.*;
 
 @Controller
-@RequestMapping("/expense")
 @SessionAttributes("monthlyExpenses")
 public class ExpenseController {
 
     @Autowired
     private ExpenseService expenseService;
 
-    @GetMapping("/")
-    public String showMain(RedirectAttributes redirectAttributes) {
-        redirectAttributes.addAttribute("selectedCategory", "all");
-        return REDIRECT_TO_LIST_VIEW;
-    }
 
     @GetMapping("/add")
     public String showExpenseForm(Model model) {
@@ -68,12 +62,13 @@ public class ExpenseController {
         return LIST_VIEW;
     }
 
-    @GetMapping("/showLast30Days")
+    @GetMapping({"/showLast30Days", "/home"})
     public String showLast30Days(Model model) {
         List<Expense> expenseList = expenseService.getExpensesFromLast30Days();
         model.addAttribute("monthlyExpenses", expenseList);
         model.addAttribute("month", Month.values());
         model.addAttribute("categories", Category.values());
+        model.addAttribute("selectedCategory", "all");
         model.addAttribute("message", expenseService.getMessage(null, 0));
         return LIST_VIEW;
     }

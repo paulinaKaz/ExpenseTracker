@@ -46,7 +46,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-6 p-2">
-                        <form action="<c:url value="/expense/edit"/>">
+                        <form action="<c:url value="/edit"/>">
                             <input type="hidden" name="id" value="${expense.id}">
                             <input type="submit" value="Edit expense" class="btn btn-warning">
                         </form>

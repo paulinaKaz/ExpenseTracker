@@ -2,6 +2,7 @@ package paulinaKaz.expensesTrackerApp.dao;
 
 
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import paulinaKaz.expensesTrackerApp.model.Expense;
@@ -14,6 +15,7 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public class ExpenseDao {
 
+    @Autowired
     private final SessionFactory sessionFactory;
 
     public ExpenseDao(SessionFactory sessionFactory) {
