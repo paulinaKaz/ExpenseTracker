@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
 import static org.hamcrest.text.MatchesPattern.matchesPattern;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static paulinaKaz.expensesTrackerApp.util.ViewsAndRedirections.EXPENSE_FORM;
 
@@ -54,6 +56,14 @@ class ControllerTest {
                 .andExpect(model().attribute("expense", Matchers.any(Expense.class)))
                 .andExpect(model().attribute("categories", Category.values()))
                 .andExpect(model().attribute("month", Month.values()));
+
+    }
+
+    @Test
+    void testProcessExpenseFormWithoutErrors() throws Exception{
+        mockMvc.perform(post("/add"))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param()
 
     }
 
