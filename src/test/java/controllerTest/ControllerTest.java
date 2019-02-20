@@ -14,15 +14,11 @@ import paulinaKaz.expensesTrackerApp.controller.ExpenseController;
 import paulinaKaz.expensesTrackerApp.model.Expense;
 import paulinaKaz.expensesTrackerApp.service.ExpenseService;
 import paulinaKaz.expensesTrackerApp.util.Category;
-import paulinaKaz.expensesTrackerApp.util.DateConverter;
 import paulinaKaz.expensesTrackerApp.util.Month;
 
-import java.util.Date;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.hamcrest.text.MatchesPattern.matchesPattern;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -60,7 +56,7 @@ class ControllerTest {
     }
 
     @Test
-    void testProcessExpenseFormWithoutErrors() throws Exception{
+    void testProcessExpenseFormWithoutErrors() throws Exception {
         mockMvc.perform(post("/add"))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param()
