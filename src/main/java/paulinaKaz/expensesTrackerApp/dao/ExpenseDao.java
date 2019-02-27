@@ -42,7 +42,7 @@ public class ExpenseDao {
 
     }
 
-    public List<Expense> getExpensesForYear(int year) {
+    public List<Expense> getExpensesForYear(int year) { //from specific year
         return sessionFactory.getCurrentSession().createQuery("from Expense where year(date) = :year")
                 .setParameter("year", year).getResultList();
     }

@@ -30,7 +30,7 @@ public class ExpenseController {
 
 
     @GetMapping("/add")
-    public String showExpenseForm(Model model) {
+    public String showExpenseForm(Model model) {//showNewExpenseForm
         Expense expense = new Expense();
         model.addAttribute(expense);
         model.addAttribute("defaultDate", DateConverter.convertDateToString(new Date()));
@@ -40,7 +40,7 @@ public class ExpenseController {
     }
 
     @PostMapping("/add")
-    public String processExpenseForm(@Valid Expense expense, BindingResult result, Model model) {
+    public String processExpenseForm(@Valid Expense expense, BindingResult result, Model model) { //processNewExpenseForm
         if (result.hasErrors()) {
             model.addAttribute("categories", Category.values());
             return EXPENSE_FORM;
@@ -53,7 +53,7 @@ public class ExpenseController {
 
     @GetMapping("/showSpecificMoth")
     @SuppressWarnings("unchecked")
-    public String showSpecificMonthOrYear(String month, Integer year, Model model) {
+    public String showSpecificMonthOrYear(String month, Integer year, Model model) { //showExpensesFromSpecificMonthOrYear
         List<Expense> expenseList = expenseService.getExpensesForSpecificMonthOrYear(month, year);
         model.addAttribute("monthlyExpenses", expenseList);
         model.addAttribute("month", Month.values());
@@ -62,8 +62,8 @@ public class ExpenseController {
         return LIST_VIEW;
     }
 
-    @GetMapping({"/showLast30Days", "/home"})
-    public String showLast30Days(Model model) {
+    @GetMapping({"/showLast30Days", "/home"}) //dalbym sam slash zamaist home
+    public String showLast30Days(Model model) {//showExpensesFromLast30Days
         List<Expense> expenseList = expenseService.getExpensesFromLast30Days();
         model.addAttribute("monthlyExpenses", expenseList);
         model.addAttribute("month", Month.values());

@@ -61,10 +61,10 @@ public class ExpenseService {
         return null;
     }
 
-    public String getMessage(String month, int year) {
+    public String getMessage(String month, int year) { //nazwa metody createListHeader
         if (EnumUtils.isValidEnum(Month.class, month)) {
             Month monthAsEnum = Enum.valueOf(Month.class, month);
-            return MONTHLY_EXPENSES_LIST_MESSAGE + monthAsEnum.getMonthName() + " " + year;
+            return MONTHLY_EXPENSES_LIST_MESSAGE + monthAsEnum.getMonthName() + " " + year; // tu mozna uzyc stringbuilder
         } else return LAST_30_DAYS_LIST_MESSAGE;
     }
 

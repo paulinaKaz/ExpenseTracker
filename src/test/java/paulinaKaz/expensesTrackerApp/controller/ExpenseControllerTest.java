@@ -57,7 +57,7 @@ class ExpenseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name(EXPENSE_FORM))
                 .andExpect(model().attribute("defaultDate", matchesPattern(datePattern)))
-                .andExpect(model().attribute("expense", Matchers.any(Expense.class)))
+                .andExpect(model().attribute("expense", Matchers.any(Expense.class))) //daj expense jako pierwszy atrybut do sprawdzenia
                 .andExpect(model().attribute("categories", Category.values()))
                 .andExpect(model().attribute("month", Month.values()));
 
@@ -70,14 +70,14 @@ class ExpenseControllerTest {
                 .param("date", "02/20/2019")
                 .param("value", "60")
                 .param("category", Category.EDUCATION.toString())
-                .param("description", "zakupy w lidlu"))
+                .param("description", "zakupy w lidlu")) //private static final String DESCRIPTION = "someDescription"
                 //.sessionAttr("expense", new Expense()))
                 .andExpect(status().isOk())
                 .andExpect(view().name(EXPENSE_VIEW))
                 .andExpect(model().attribute("expense", Matchers.any(Expense.class)))
                 .andExpect(model().attribute("month", Month.values()))
-                .andExpect(model().attributeHasNoErrors())
-                .andExpect(model().attribute("expense", allOf(
+                .andExpect(model().attributeHasNoErrors())// to daj po view name
+                .andExpect(model().attribute("expense", allOf( // a to po expense
                         hasProperty("date", is(expenseDate)),
                         hasProperty("value", is(60d)),
                         hasProperty("category", is(Category.EDUCATION)),
@@ -90,7 +90,7 @@ class ExpenseControllerTest {
 
     @Test
     void testProcessExpenseForm_WithErrors() throws Exception {
-        Date expenseDate = DateConverter.convertStringToDate("02/20/2020");
+        Date expenseDate = DateConverter.convertStringToDate("02/20/2020"); //to mozna dodac jako private static final String - "EXAMPLE_DATE"
         mockMvc.perform(post("/add")
                 .param("date", "02/20/2020")
                 .param("value", "-5")
@@ -157,7 +157,7 @@ class ExpenseControllerTest {
     }
 
     @Test
-    void testShowExpensesForSpecificCategory_WhenSessionExists() throws Exception {
+    void testShowExpensesForSpecificCategory_WhenSessionExists() throws Exception {//whenMonthlyExpensesAttributeInSession
         List<Expense> testList = Arrays.asList(new Expense(), new Expense());
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("monthlyExpenses", testList);
@@ -183,7 +183,7 @@ class ExpenseControllerTest {
     }
 
     @Test
-    void testShoeExpenseListForSpecificCategory_WhenSessionExpired() throws Exception {
+    void testShoeExpenseListForSpecificCategory_WhenSessionExpired() throws Exception { //whenMonthlyExpensesAttributeNotInSession
 
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("monthlyExpenses", null);
@@ -214,7 +214,7 @@ class ExpenseControllerTest {
                 .andExpect(view().name(EXPENSE_VIEW))
                 .andExpect(model().attribute("expense", testExpense))
                 .andExpect(model().attribute("month", Month.values()))
-                .andExpect(model().attributeHasNoErrors());
+                .andExpect(model().attributeHasNoErrors()); //niepotrzebne
 
         verify(expenseServiceMock, times(1)).findById(2);
     }
@@ -222,7 +222,7 @@ class ExpenseControllerTest {
     @Test
     void testShowExpenseEditForm() throws Exception {
 
-        Expense testEditedExpense = new Expense();
+        Expense testEditedExpense = new Expense(); //expenseToEdit albo moze byc tez testExpense
 
         when(expenseServiceMock.findById(1)).thenReturn(testEditedExpense);
 
@@ -233,7 +233,7 @@ class ExpenseControllerTest {
                 .andExpect(model().attribute("expense", testEditedExpense))
                 .andExpect(model().attribute("month", Month.values()))
                 .andExpect(model().attribute("categories", Category.values()))
-                .andExpect(model().attributeHasNoErrors());
+                .andExpect(model().attributeHasNoErrors()); //niepotrzebne
 
         verify(expenseServiceMock, times(1)).findById(1);
     }
@@ -246,7 +246,7 @@ class ExpenseControllerTest {
                 .param("date", "02/26/2019")
                 .param("value", "20")
                 .param("category", Category.TRANSPORT.toString())
-                .param("description", "obiad"))
+                .param("description", "obiad")) //static final string
                 //.sessionAttr("expense", new Expense()))
                 .andExpect(status().isOk())
                 .andExpect(view().name(EXPENSE_VIEW))
