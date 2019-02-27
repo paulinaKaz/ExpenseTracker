@@ -14,8 +14,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static paulinaKaz.expensesTrackerApp.util.Messages.LIST_30_DAYS;
-import static paulinaKaz.expensesTrackerApp.util.Messages.LIST_MONTH;
+import static paulinaKaz.expensesTrackerApp.util.Messages.LAST_30_DAYS_LIST_MESSAGE;
+import static paulinaKaz.expensesTrackerApp.util.Messages.MONTHLY_EXPENSES_LIST_MESSAGE;
 
 
 @Service
@@ -64,8 +64,8 @@ public class ExpenseService {
     public String getMessage(String month, int year) {
         if (EnumUtils.isValidEnum(Month.class, month)) {
             Month monthAsEnum = Enum.valueOf(Month.class, month);
-            return LIST_MONTH + monthAsEnum.getMonthName() + " " + year;
-        } else return LIST_30_DAYS;
+            return MONTHLY_EXPENSES_LIST_MESSAGE + monthAsEnum.getMonthName() + " " + year;
+        } else return LAST_30_DAYS_LIST_MESSAGE;
     }
 
     private List<Expense> sortList(List<Expense> expenseList) {
