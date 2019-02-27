@@ -1,4 +1,4 @@
-package controllerTest;
+package paulinaKaz.expensesTrackerApp.controller;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +11,6 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import paulinaKaz.expensesTrackerApp.controller.ExpenseController;
 import paulinaKaz.expensesTrackerApp.model.Expense;
 import paulinaKaz.expensesTrackerApp.service.ExpenseService;
 import paulinaKaz.expensesTrackerApp.util.Category;
@@ -33,7 +32,7 @@ import static paulinaKaz.expensesTrackerApp.util.Messages.*;
 import static paulinaKaz.expensesTrackerApp.util.ViewsAndRedirections.*;
 
 
-class ControllerTest {
+class ExpenseControllerTest {
 
     @InjectMocks
     private ExpenseController controller;
@@ -45,7 +44,8 @@ class ControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver("/WEB-INF/views", ".jsp");
+        InternalResourceViewResolver viewResolver =
+                new InternalResourceViewResolver("/WEB-INF/views", ".jsp");
         mockMvc = MockMvcBuilders.standaloneSetup(controller).setViewResolvers(viewResolver).build();
 
     }

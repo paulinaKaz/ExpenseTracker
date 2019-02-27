@@ -1,17 +1,19 @@
-package controllerTest;
+package paulinaKaz.expensesTrackerApp.service;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.web.servlet.MockMvc;
 import paulinaKaz.expensesTrackerApp.dao.ExpenseDao;
-import paulinaKaz.expensesTrackerApp.service.ExpenseService;
 
-public class ServiceTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+class ExpenseServiceTest {
 
     @InjectMocks
     private ExpenseService service;
 
     @Mock
     private ExpenseDao expenseDaoMock;
+
+    
 
 }
