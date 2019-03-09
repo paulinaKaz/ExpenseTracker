@@ -77,13 +77,11 @@ public class Expense implements Comparable<Expense> {
         return date;
     }
 
-    public void setDate(/*String dateString*/Date date) {
-        /*if (dateString!=null) date = DateConverter.convertStringToDate(dateString);
-        else date = null;*/
+    public void setDate(Date date) {
         this.date = date;
     }
 
     public int compareTo(Expense expense) {
-        return getDate().compareTo(expense.getDate());
+        return expense.getDate().compareTo(getDate());
     }
 }

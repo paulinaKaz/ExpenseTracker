@@ -17,8 +17,7 @@ import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 
-import static paulinaKaz.expensesTrackerApp.util.Messages.DELETED;
-import static paulinaKaz.expensesTrackerApp.util.Messages.SESSION;
+import static paulinaKaz.expensesTrackerApp.util.Messages.*;
 import static paulinaKaz.expensesTrackerApp.util.ViewsAndRedirections.*;
 
 @Controller
@@ -30,47 +29,47 @@ public class ExpenseController {
 
 
     @GetMapping("/add")
-    public String showExpenseForm(Model model) {//showNewExpenseForm
+    public String showNewExpenseForm(Model model) {
         Expense expense = new Expense();
         model.addAttribute(expense);
         model.addAttribute("defaultDate", DateConverter.convertDateToString(new Date()));
         model.addAttribute("categories", Category.values());
         model.addAttribute("month", Month.values());
-        return EXPENSE_FORM;
+        return NEW_EXPENSE_FORM_VIEW;
     }
 
     @PostMapping("/add")
-    public String processExpenseForm(@Valid Expense expense, BindingResult result, Model model) { //processNewExpenseForm
+    public String processNewExpenseForm(@Valid Expense expense, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("categories", Category.values());
-            return EXPENSE_FORM;
+            return NEW_EXPENSE_FORM_VIEW;
         }
         model.addAttribute(expense);
         model.addAttribute("month", Month.values());
         expenseService.saveOrUpdateExpense(expense);
-        return EXPENSE_VIEW;
+        return SINGLE_EXPENSE_VIEW;
     }
 
     @GetMapping("/showSpecificMoth")
     @SuppressWarnings("unchecked")
-    public String showSpecificMonthOrYear(String month, Integer year, Model model) { //showExpensesFromSpecificMonthOrYear
+    public String showExpensesForSpecificMonthOrYear(String month, Integer year, Model model) {
         List<Expense> expenseList = expenseService.getExpensesForSpecificMonthOrYear(month, year);
         model.addAttribute("monthlyExpenses", expenseList);
         model.addAttribute("month", Month.values());
         model.addAttribute("categories", Category.values());
-        model.addAttribute("message", expenseService.getMessage(month, year));
-        return LIST_VIEW;
+        model.addAttribute("message", expenseService.createListHeader(month, year));
+        return EXPENSE_LIST_VIEW;
     }
 
     @GetMapping({"/showLast30Days", "/home"}) //dalbym sam slash zamaist home
-    public String showLast30Days(Model model) {//showExpensesFromLast30Days
+    public String showExpensesFromLast30Days(Model model) {
         List<Expense> expenseList = expenseService.getExpensesFromLast30Days();
         model.addAttribute("monthlyExpenses", expenseList);
         model.addAttribute("month", Month.values());
         model.addAttribute("categories", Category.values());
         model.addAttribute("selectedCategory", "all");
-        model.addAttribute("message", expenseService.getMessage(null, 0));
-        return LIST_VIEW;
+        model.addAttribute("message", expenseService.createListHeader(null, 0));
+        return EXPENSE_LIST_VIEW;
     }
 
     @GetMapping("/expensesList")
@@ -80,14 +79,14 @@ public class ExpenseController {
             model.addAttribute("filteredMonthlyExpenses",
                     expenseService.getExpensesForSpecificCategory(expenseList, selectedCategory));
         } catch (NullPointerException ex) {
-            model.addAttribute("message", SESSION);
-            return MESSAGE;
+            model.addAttribute("message", SESSION_EXPIRED_MESSAGE);
+            return MESSAGE_VIEW;
         }
         model.addAttribute("categories", Category.values());
         model.addAttribute("selectedCategory", selectedCategory);
         model.addAttribute("month", Month.values());
         model.addAttribute("message", message);
-        return LIST_VIEW;
+        return EXPENSE_LIST_VIEW;
     }
 
     @GetMapping("/showExpense")
@@ -95,7 +94,7 @@ public class ExpenseController {
         Expense chosenExpense = expenseService.findById(id);
         model.addAttribute("expense", chosenExpense);
         model.addAttribute("month", Month.values());
-        return EXPENSE_VIEW;
+        return SINGLE_EXPENSE_VIEW;
     }
 
     @GetMapping("/edit")
@@ -104,7 +103,7 @@ public class ExpenseController {
         model.addAttribute(editedExpense);
         model.addAttribute("categories", Category.values());
         model.addAttribute("month", Month.values());
-        return EDIT_FORM;
+        return EDIT_EXPENSE_FORM_VIEW;
     }
 
     @PostMapping("/edit")
@@ -112,20 +111,20 @@ public class ExpenseController {
         if (result.hasErrors()) {
             model.addAttribute("categories", Category.values());
             model.addAttribute("month", Month.values());
-            return EDIT_FORM;
+            return EDIT_EXPENSE_FORM_VIEW;
         }
         model.addAttribute(expense);
         model.addAttribute("month", Month.values());
         expenseService.saveOrUpdateExpense(expense);
-        return EXPENSE_VIEW;
+        return SINGLE_EXPENSE_VIEW;
     }
 
     @PostMapping("/delete/{id}")
     public String deleteExpense(@PathVariable("id") int id, Model model) {
         expenseService.deleteExpense(id);
-        model.addAttribute("message", DELETED);
+        model.addAttribute("message", EXPENSE_DELETED_MESSAGE);
         model.addAttribute("month", Month.values());
-        return MESSAGE;
+        return MESSAGE_VIEW;
     }
 
 }

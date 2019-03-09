@@ -30,7 +30,7 @@ public class ExpenseDao {
         sessionFactory.getCurrentSession().delete(expense);
     }
 
-    public List<Expense> getExpensesFromLast30Days(Date date) {
+    public List<Expense> getExpensesSinceDate(Date date) {
         return sessionFactory.getCurrentSession().createQuery("from Expense where date > :param")
                 .setParameter("param", date).getResultList();
     }

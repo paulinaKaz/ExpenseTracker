@@ -36,10 +36,14 @@ class ExpenseControllerTest {
 
     @InjectMocks
     private ExpenseController controller;
+
     @Mock
     private ExpenseService expenseServiceMock;
 
     private MockMvc mockMvc;
+    private static final String DESCRIPTION = "someDescription";
+    private static final String EXAMPLE_WRONG_DATE = "02/20/2020";
+    private static final String EXAMPLE_DATE = "02/20/2019";
 
     @BeforeEach
     void setUp() {
@@ -51,37 +55,37 @@ class ExpenseControllerTest {
     }
 
     @Test
-    void testShowExpenseForm() throws Exception {
+    void testShowNewExpenseForm() throws Exception {
         Pattern datePattern = Pattern.compile("^(1[0-2]|0[1-9])/(3[01]|[12][0-9]|0[1-9])/[0-9]{4}$");
         mockMvc.perform(get("/add"))
                 .andExpect(status().isOk())
-                .andExpect(view().name(EXPENSE_FORM))
+                .andExpect(view().name(NEW_EXPENSE_FORM_VIEW))
+                .andExpect(model().attribute("expense", Matchers.any(Expense.class)))
                 .andExpect(model().attribute("defaultDate", matchesPattern(datePattern)))
-                .andExpect(model().attribute("expense", Matchers.any(Expense.class))) //daj expense jako pierwszy atrybut do sprawdzenia
                 .andExpect(model().attribute("categories", Category.values()))
                 .andExpect(model().attribute("month", Month.values()));
 
     }
 
     @Test
-    void testProcessExpenseForm_WithoutErrors() throws Exception {
-        Date expenseDate = DateConverter.convertStringToDate("02/20/2019");
+    void testProcessNewExpenseForm_WithoutErrors() throws Exception {
+        Date expenseDate = DateConverter.convertStringToDate(EXAMPLE_DATE);
         mockMvc.perform(post("/add")
-                .param("date", "02/20/2019")
+                .param("date", EXAMPLE_DATE)
                 .param("value", "60")
                 .param("category", Category.EDUCATION.toString())
-                .param("description", "zakupy w lidlu")) //private static final String DESCRIPTION = "someDescription"
-                //.sessionAttr("expense", new Expense()))
+                .param("description", DESCRIPTION))
                 .andExpect(status().isOk())
-                .andExpect(view().name(EXPENSE_VIEW))
+                .andExpect(view().name(SINGLE_EXPENSE_VIEW))
+                .andExpect(model().attributeHasNoErrors())
                 .andExpect(model().attribute("expense", Matchers.any(Expense.class)))
-                .andExpect(model().attribute("month", Month.values()))
-                .andExpect(model().attributeHasNoErrors())// to daj po view name
-                .andExpect(model().attribute("expense", allOf( // a to po expense
+                .andExpect(model().attribute("expense", allOf(
                         hasProperty("date", is(expenseDate)),
                         hasProperty("value", is(60d)),
                         hasProperty("category", is(Category.EDUCATION)),
-                        hasProperty("description", is("zakupy w lidlu")))));
+                        hasProperty("description", is(DESCRIPTION)))))
+                .andExpect(model().attribute("month", Month.values()));
+
 
         ArgumentCaptor<Expense> argument = ArgumentCaptor.forClass(Expense.class);
 
@@ -89,15 +93,15 @@ class ExpenseControllerTest {
     }
 
     @Test
-    void testProcessExpenseForm_WithErrors() throws Exception {
-        Date expenseDate = DateConverter.convertStringToDate("02/20/2020"); //to mozna dodac jako private static final String - "EXAMPLE_DATE"
+    void testProcessNewExpenseForm_WithErrors() throws Exception {
+        Date expenseDate = DateConverter.convertStringToDate(EXAMPLE_WRONG_DATE);
         mockMvc.perform(post("/add")
-                .param("date", "02/20/2020")
+                .param("date", EXAMPLE_WRONG_DATE)
                 .param("value", "-5")
                 .param("category", Category.EDUCATION.toString())
                 .param("description", " "))
                 .andExpect(status().isOk())
-                .andExpect(view().name(EXPENSE_FORM))
+                .andExpect(view().name(NEW_EXPENSE_FORM_VIEW))
                 .andExpect(model().attributeHasFieldErrors("expense", "date"))
                 .andExpect(model().attributeHasFieldErrors("expense", "value"))
                 .andExpect(model().attributeHasFieldErrors("expense", "description"))
@@ -113,51 +117,51 @@ class ExpenseControllerTest {
     }
 
     @Test
-    void testShowSpecificMonthOrYear() throws Exception {
+    void testShowExpensesForSpecificMonthOrYear() throws Exception {
         List<Expense> testList = Arrays.asList(new Expense(), new Expense());
         when(expenseServiceMock.getExpensesForSpecificMonthOrYear(Month.JANUARY.toString(), 2019))
                 .thenReturn(testList);
-        when(expenseServiceMock.getMessage(Month.JANUARY.toString(), 2019))
-                .thenReturn(MONTHLY_EXPENSES_LIST_MESSAGE);
+        when(expenseServiceMock.createListHeader(Month.JANUARY.toString(), 2019))
+                .thenReturn(MONTHLY_EXPENSES_LIST_HEADER);
 
         mockMvc.perform(get("/showSpecificMoth")
                 .param("month", Month.JANUARY.toString())
                 .param("year", "2019"))
                 .andExpect(status().isOk())
-                .andExpect(view().name(LIST_VIEW))
+                .andExpect(view().name(EXPENSE_LIST_VIEW))
                 .andExpect(model().attribute("monthlyExpenses", testList))
                 .andExpect(model().attribute("month", Month.values()))
                 .andExpect(model().attribute("categories", Category.values()))
-                .andExpect(model().attribute("message", MONTHLY_EXPENSES_LIST_MESSAGE));
+                .andExpect(model().attribute("message", MONTHLY_EXPENSES_LIST_HEADER));
 
         verify(expenseServiceMock, times(1))
                 .getExpensesForSpecificMonthOrYear(Month.JANUARY.toString(), 2019);
-        verify(expenseServiceMock, times(1)).getMessage(Month.JANUARY.toString(), 2019);
+        verify(expenseServiceMock, times(1)).createListHeader(Month.JANUARY.toString(), 2019);
     }
 
     @Test
-    void testShowLast30Days() throws Exception {
+    void testShowExpensesFromLast30Days() throws Exception {
         List<Expense> testList = Arrays.asList(new Expense(), new Expense());
         when(expenseServiceMock.getExpensesFromLast30Days()).thenReturn(testList);
-        when(expenseServiceMock.getMessage(null, 0)).thenReturn(LAST_30_DAYS_LIST_MESSAGE);
+        when(expenseServiceMock.createListHeader(null, 0)).thenReturn(LAST_30_DAYS_LIST_HEADER);
 
         mockMvc.perform(get("/showLast30Days", "/home")
                 .param("month", "null")
                 .param("year", "0"))
                 .andExpect(status().isOk())
-                .andExpect(view().name(LIST_VIEW))
+                .andExpect(view().name(EXPENSE_LIST_VIEW))
                 .andExpect(model().attribute("monthlyExpenses", testList))
                 .andExpect(model().attribute("month", Month.values()))
                 .andExpect(model().attribute("categories", Category.values()))
                 .andExpect(model().attribute("selectedCategory", "all"))
-                .andExpect(model().attribute("message", LAST_30_DAYS_LIST_MESSAGE));
+                .andExpect(model().attribute("message", LAST_30_DAYS_LIST_HEADER));
 
         verify(expenseServiceMock, times(1)).getExpensesFromLast30Days();
-        verify(expenseServiceMock, times(1)).getMessage(null, 0);
+        verify(expenseServiceMock, times(1)).createListHeader(null, 0);
     }
 
     @Test
-    void testShowExpensesForSpecificCategory_WhenSessionExists() throws Exception {//whenMonthlyExpensesAttributeInSession
+    void testShowExpensesForSpecificCategory_WhenMonthlyExpensesAttributeInSession() throws Exception {
         List<Expense> testList = Arrays.asList(new Expense(), new Expense());
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("monthlyExpenses", testList);
@@ -167,15 +171,15 @@ class ExpenseControllerTest {
 
         mockMvc.perform(get("/expensesList")
                 .param("selectedCategory", Category.EDUCATION.toString())
-                .param("message", LAST_30_DAYS_LIST_MESSAGE)
+                .param("message", LAST_30_DAYS_LIST_HEADER)
                 .session(session))
                 .andExpect(status().isOk())
-                .andExpect(view().name(LIST_VIEW))
+                .andExpect(view().name(EXPENSE_LIST_VIEW))
                 .andExpect(model().attribute("filteredMonthlyExpenses", testList))
                 .andExpect(model().attribute("categories", Category.values()))
                 .andExpect(model().attribute("selectedCategory", Category.EDUCATION.toString()))
                 .andExpect(model().attribute("month", Month.values()))
-                .andExpect(model().attribute("message", LAST_30_DAYS_LIST_MESSAGE));
+                .andExpect(model().attribute("message", LAST_30_DAYS_LIST_HEADER));
 
         verify(expenseServiceMock, times(1))
                 .getExpensesForSpecificCategory(testList, Category.EDUCATION.toString());
@@ -183,7 +187,7 @@ class ExpenseControllerTest {
     }
 
     @Test
-    void testShoeExpenseListForSpecificCategory_WhenSessionExpired() throws Exception { //whenMonthlyExpensesAttributeNotInSession
+    void testShoeExpenseListForSpecificCategory_WhenMonthlyExpensesAttributeNotInSession() throws Exception {
 
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("monthlyExpenses", null);
@@ -192,11 +196,11 @@ class ExpenseControllerTest {
 
         mockMvc.perform(get("/expensesList")
                 .param("selectedCategory", Category.EDUCATION.toString())
-                .param("message", SESSION)
+                .param("message", SESSION_EXPIRED_MESSAGE)
                 .session(session))
                 .andExpect(status().isOk())
-                .andExpect(view().name(MESSAGE))
-                .andExpect(model().attribute("message", SESSION));
+                .andExpect(view().name(MESSAGE_VIEW))
+                .andExpect(model().attribute("message", SESSION_EXPIRED_MESSAGE));
 
         verify(expenseServiceMock, times(1))
                 .getExpensesForSpecificCategory(null, Category.EDUCATION.toString());
@@ -211,10 +215,9 @@ class ExpenseControllerTest {
         mockMvc.perform(get("/showExpense")
                 .param("id", "2"))
                 .andExpect(status().isOk())
-                .andExpect(view().name(EXPENSE_VIEW))
+                .andExpect(view().name(SINGLE_EXPENSE_VIEW))
                 .andExpect(model().attribute("expense", testExpense))
-                .andExpect(model().attribute("month", Month.values()))
-                .andExpect(model().attributeHasNoErrors()); //niepotrzebne
+                .andExpect(model().attribute("month", Month.values()));
 
         verify(expenseServiceMock, times(1)).findById(2);
     }
@@ -222,18 +225,17 @@ class ExpenseControllerTest {
     @Test
     void testShowExpenseEditForm() throws Exception {
 
-        Expense testEditedExpense = new Expense(); //expenseToEdit albo moze byc tez testExpense
+        Expense testExpenseToEdit = new Expense();
 
-        when(expenseServiceMock.findById(1)).thenReturn(testEditedExpense);
+        when(expenseServiceMock.findById(1)).thenReturn(testExpenseToEdit);
 
         mockMvc.perform(get("/edit")
                 .param("id", "1"))
                 .andExpect(status().isOk())
-                .andExpect(view().name(EDIT_FORM))
-                .andExpect(model().attribute("expense", testEditedExpense))
+                .andExpect(view().name(EDIT_EXPENSE_FORM_VIEW))
+                .andExpect(model().attribute("expense", testExpenseToEdit))
                 .andExpect(model().attribute("month", Month.values()))
-                .andExpect(model().attribute("categories", Category.values()))
-                .andExpect(model().attributeHasNoErrors()); //niepotrzebne
+                .andExpect(model().attribute("categories", Category.values()));
 
         verify(expenseServiceMock, times(1)).findById(1);
     }
@@ -241,23 +243,22 @@ class ExpenseControllerTest {
     @Test
     void testProcessExpenseEditForm_WithoutErrors() throws Exception {
 
-        Date expenseDate = DateConverter.convertStringToDate("02/26/2019");
+        Date expenseDate = DateConverter.convertStringToDate(EXAMPLE_DATE);
         mockMvc.perform(post("/edit")
-                .param("date", "02/26/2019")
+                .param("date", EXAMPLE_DATE)
                 .param("value", "20")
                 .param("category", Category.TRANSPORT.toString())
-                .param("description", "obiad")) //static final string
-                //.sessionAttr("expense", new Expense()))
+                .param("description", DESCRIPTION))
                 .andExpect(status().isOk())
-                .andExpect(view().name(EXPENSE_VIEW))
-                .andExpect(model().attribute("expense", Matchers.any(Expense.class)))
-                .andExpect(model().attribute("month", Month.values()))
+                .andExpect(view().name(SINGLE_EXPENSE_VIEW))
                 .andExpect(model().attributeHasNoErrors())
+                .andExpect(model().attribute("expense", Matchers.any(Expense.class)))
                 .andExpect(model().attribute("expense", allOf(
                         hasProperty("date", is(expenseDate)),
                         hasProperty("value", is(20d)),
                         hasProperty("category", is(Category.TRANSPORT)),
-                        hasProperty("description", is("obiad")))));
+                        hasProperty("description", is(DESCRIPTION)))))
+                .andExpect(model().attribute("month", Month.values()));
 
         ArgumentCaptor<Expense> argument = ArgumentCaptor.forClass(Expense.class);
 
@@ -268,24 +269,24 @@ class ExpenseControllerTest {
     @Test
     void TestProcessExpenseEditForm_WithErrors() throws Exception {
 
-        Date expenseDate = DateConverter.convertStringToDate("02/28/2020");
+        Date expenseDate = DateConverter.convertStringToDate(EXAMPLE_WRONG_DATE);
         mockMvc.perform(post("/edit")
-                .param("date", "02/28/2020")
+                .param("date", EXAMPLE_WRONG_DATE)
                 .param("value", "-20")
                 .param("category", Category.TRANSPORT.toString())
                 .param("description", " "))
                 .andExpect(status().isOk())
-                .andExpect(view().name(EDIT_FORM))
+                .andExpect(view().name(EDIT_EXPENSE_FORM_VIEW))
                 .andExpect(model().attributeHasFieldErrors("expense", "date"))
                 .andExpect(model().attributeHasFieldErrors("expense", "value"))
                 .andExpect(model().attributeHasFieldErrors("expense", "description"))
-                .andExpect(model().attribute("month", Month.values()))
-                .andExpect(model().attribute("categories", Category.values()))
                 .andExpect(model().attribute("expense", allOf(
                         hasProperty("date", is(expenseDate)),
                         hasProperty("value", is(-20d)),
                         hasProperty("description", is(" ")),
-                        hasProperty("category", is(Category.TRANSPORT)))));
+                        hasProperty("category", is(Category.TRANSPORT)))))
+                .andExpect(model().attribute("month", Month.values()))
+                .andExpect(model().attribute("categories", Category.values()));
 
         verifyZeroInteractions(expenseServiceMock);
     }
@@ -296,8 +297,8 @@ class ExpenseControllerTest {
         int validId = 2;
         mockMvc.perform(post("/delete/{id}", validId))
                 .andExpect(status().isOk())
-                .andExpect(view().name(MESSAGE))
-                .andExpect(model().attribute("message", DELETED))
+                .andExpect(view().name(MESSAGE_VIEW))
+                .andExpect(model().attribute("message", EXPENSE_DELETED_MESSAGE))
                 .andExpect(model().attribute("month", Month.values()));
 
         verify(expenseServiceMock, times(1)).deleteExpense(validId);
