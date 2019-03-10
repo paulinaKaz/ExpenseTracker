@@ -166,7 +166,7 @@ class ExpenseControllerTest {
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("monthlyExpenses", testList);
 
-        when(expenseServiceMock.getExpensesForSpecificCategory(testList, Category.EDUCATION.toString()))
+        when(expenseServiceMock.filterExpenseListByCategory(testList, Category.EDUCATION.toString()))
                 .thenReturn(testList);
 
         mockMvc.perform(get("/expensesList")
@@ -182,7 +182,7 @@ class ExpenseControllerTest {
                 .andExpect(model().attribute("message", LAST_30_DAYS_LIST_HEADER));
 
         verify(expenseServiceMock, times(1))
-                .getExpensesForSpecificCategory(testList, Category.EDUCATION.toString());
+                .filterExpenseListByCategory(testList, Category.EDUCATION.toString());
 
     }
 
@@ -191,7 +191,7 @@ class ExpenseControllerTest {
 
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("monthlyExpenses", null);
-        when(expenseServiceMock.getExpensesForSpecificCategory(null, Category.EDUCATION.toString()))
+        when(expenseServiceMock.filterExpenseListByCategory(null, Category.EDUCATION.toString()))
                 .thenThrow(NullPointerException.class);
 
         mockMvc.perform(get("/expensesList")
@@ -203,7 +203,7 @@ class ExpenseControllerTest {
                 .andExpect(model().attribute("message", SESSION_EXPIRED_MESSAGE));
 
         verify(expenseServiceMock, times(1))
-                .getExpensesForSpecificCategory(null, Category.EDUCATION.toString());
+                .filterExpenseListByCategory(null, Category.EDUCATION.toString());
     }
 
     @Test

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import paulinaKaz.expensesTrackerApp.model.Expense;
 import paulinaKaz.expensesTrackerApp.service.ExpenseService;
 import paulinaKaz.expensesTrackerApp.util.Category;
@@ -77,7 +76,7 @@ public class ExpenseController {
         try {
             List<Expense> expenseList = (List<Expense>) session.getAttribute("monthlyExpenses");
             model.addAttribute("filteredMonthlyExpenses",
-                    expenseService.getExpensesForSpecificCategory(expenseList, selectedCategory));
+                    expenseService.filterExpenseListByCategory(expenseList, selectedCategory));
         } catch (NullPointerException ex) {
             model.addAttribute("message", SESSION_EXPIRED_MESSAGE);
             return MESSAGE_VIEW;
